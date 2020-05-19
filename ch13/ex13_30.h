@@ -1,50 +1,64 @@
 //
-//  ex13_30.h
-//  Exercise 13.30
+// Created by hellcat on 2020.05.18.
 //
-//  Created by pezy on 1/23/15.
-//  Copyright (c) 2015 pezy. All rights reserved.
-//
-//  Write and test a swap function for your valuelike version of HasPtr.
-//  Give your swap a print statement that notes when it is executed.
-//
-//  See ex13_22.h
-
-#ifndef CP5_ex13_11_h
-#define CP5_ex13_11_h
-
-#include <string>
 #include <iostream>
+#include <vector>
+#include <string>
+using std::cout;
+using std::endl;
+using std::string;
 
 class HasPtr {
 public:
-    friend void swap(HasPtr&, HasPtr&);
-    HasPtr(const std::string& s = std::string()) : ps(new std::string(s)), i(0)
-    {
+    explicit HasPtr(const string &s = string())
+        : ps(new string(s)), i(0), use(new size_t(1)) {}
+    HasPtr(const HasPtr& rhs)
+        : ps(new string(*rhs.ps)), i(rhs.i), use(rhs.use) { ++*use; }
+    ~HasPtr() {
+        if(--*use == 0) {
+            delete ps;
+            delete use;
+        }
     }
-    HasPtr(const HasPtr& hp) : ps(new std::string(*hp.ps)), i(hp.i) {}
-    HasPtr& operator=(const HasPtr& hp)
-    {
-        auto new_p = new std::string(*hp.ps);
-        delete ps;
-        ps = new_p;
-        i = hp.i;
+    friend void swap(HasPtr &lhs, HasPtr &rhs);
+    HasPtr& operator = (HasPtr& rhs_hp) {
+//        ++*rhs_hp.use;
+//        if(--*use == 0) {
+//            delete ps;
+//            delete use;
+//        }
+//        ps = rhs_hp.ps;
+//        i = rhs_hp.i;
+//        use = rhs_hp.use;
+//        return *this;
+        swap(*this, rhs_hp);
         return *this;
     }
-    ~HasPtr() { delete ps; }
+    void print() {
+//        cout<<(*use)<<endl;
+        cout<<*ps<<endl;
+    }
 
-    void show() { std::cout << *ps << std::endl; }
 private:
-    std::string* ps;
+    string *ps;
     int i;
+    size_t *use; // 记录有多少个对象共享*ps的成员
 };
 
-void swap(HasPtr& lhs, HasPtr& rhs)
-{
+void swap(HasPtr &lhs, HasPtr &rhs) {
     using std::swap;
     swap(lhs.ps, rhs.ps);
     swap(lhs.i, rhs.i);
-    std::cout << "call swap(HasPtr& lhs, HasPtr& rhs)" << std::endl;
+    cout<<"swap(HasPtr &lhs, HasPtr &rhs) called."<<endl;
 }
 
-#endif
+int main() {
+    HasPtr p1("halo");
+    HasPtr p2(p1);
+    HasPtr p3(p1);
+    HasPtr p4;
+
+//    p3.print();
+    p4 = p2;  // swap(HasPtr &lhs, HasPtr &rhs) called.
+    p4.print();  // halo
+}
