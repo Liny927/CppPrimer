@@ -1,45 +1,28 @@
-//
-//  ex13_17.cpp
-//  Exercise 13.17
-//
-//  Created by pezy on 1/15/15.
-//  Copyright (c) 2015 pezy. All rights reserved.
-//
-//  Write versions of numbered and f corresponding to the previous three
-//  exercises
-//  and check whether you correctly predicted the output.
-//
-//  For 13.16
-
 #include <iostream>
+using namespace std;
 
-class numbered {
-public:
-    numbered()
-    {
-        static int unique = 10;
+struct numbered {
+    numbered() {
+//        static int unique = 10;
         mysn = unique++;
     }
-
     numbered(const numbered& n) { mysn = n.mysn + 1; }
-
     int mysn;
+    static int unique;
 };
 
-void f(const numbered& s)
-{
-    std::cout << s.mysn << std::endl;
+int numbered::unique = 10;
+
+void f(const numbered& s) {
+    cout<<s.mysn<<" ";
 }
 
-int main()
-{
+int main() {
     numbered a, b = a, c = b;
-    f(a);
-    f(b);
-    f(c);
+    f(a); f(b); f(c);
 }
-
-// output
-// 10
-// 11
-// 12
+/*
+ * 13.14 Output: 10 10 10
+ * 13.15 Output: 11 12 13
+ * 13.16 Output: 11 12 13
+ */
